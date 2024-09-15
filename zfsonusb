@@ -5,7 +5,6 @@
 
 # Load configuration from external file
 # shellcheck source=/dev/null
-
 CONFIG_FILE=~/.zfsonusb.conf
 if [[ -f "$CONFIG_FILE" ]]; then
     source "$CONFIG_FILE"
@@ -13,6 +12,8 @@ else
     echo "Configuration file $CONFIG_FILE not found!"
     exit 1
 fi
+
+VERSION="24.09.16"
 
 # Function to list available disks in /dev/disk/by-id
 list_disks() {
@@ -62,6 +63,7 @@ export_pool() {
 
 # Function to display help with detailed steps
 show_help() {
+    echo "zfsonusb v$VERSION"
     echo "Usage: $0 {import|export|list|help}"
     echo ""
     echo "Steps to use the script:"
