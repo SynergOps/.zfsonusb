@@ -29,7 +29,7 @@ list_disks() {
 # Function to import the ZFS pool
 import_pool() {
     IMPORT_CMD="sudo zpool import"
-    for DISK in "${DISKS[@]}"; do
+    for DISK in "${DISKS_ARRAY[@]}"; do
         IMPORT_CMD="$IMPORT_CMD -d $DISK"
     done
     IMPORT_CMD="$IMPORT_CMD $ZFS_POOL_NAME -N"
@@ -50,7 +50,7 @@ export_pool() {
     # Prepare the udisksctl power-off command
     POWER_OFF_CMD="sudo udisksctl power-off"
     if command -v udisksctl &> /dev/null; then
-    	for DISK in "${DISKS[@]}"; do
+    	for DISK in "${DISKS_ARRAY[@]}"; do
     	     POWER_OFF_CMD="$POWER_OFF_CMD -b $DISK"
     	done
     	# Execute the udisksctl power-off command
