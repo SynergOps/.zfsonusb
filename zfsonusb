@@ -15,7 +15,13 @@ fi
 # Function to list available disks in /dev/disk/by-id
 list_disks() {
     echo -e "Listing available disks in /dev/disk/by-id:"
-    ls -l /dev/disk/by-id | grep usb
+    for n in /dev/disk/by-id/*; do
+        if [[ "$n" == *usb* ]]; then
+            # Get the actual device (follow the symlink)
+            DEVICE=$(readlink -f "$n")
+            echo "$n ... points to -> $DEVICE"
+        fi
+    done
 }
 
 # Function to import the ZFS pool
