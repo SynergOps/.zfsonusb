@@ -4,6 +4,7 @@
     <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=SATQ6Y9S3UCSG" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-yellow.svg" alt="Donate to project"></a>
 
 ZFS on USB is a shell script that helps you import and export a ZFS pool that resides on external disks
+![zfsonusb](https://github.com/user-attachments/assets/b7d8cf7a-0027-490b-af58-88927dceb0d5)
 
 Note that when you export (unmount) your ZFS pool, `zfsonusb` will also power-off the disks so that you can safely unplug your USB cable from your PC.
 
