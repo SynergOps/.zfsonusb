@@ -64,7 +64,8 @@ export_pool() {
 # Function to display help with detailed steps
 show_help() {
     echo "zfsonusb v$VERSION"
-    echo "Usage: $0 {import|export|list|help}"
+    echo "Usage:" 
+    echo "      zfsonusb {import|export|list|help}"
     echo ""
     echo "Steps to use the script:"
     echo "  1. List available disks in /dev/disk/by-id:"
