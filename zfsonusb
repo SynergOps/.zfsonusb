@@ -1,0 +1,104 @@
+#!/bin/bash
+# License: MIT
+# Copyright (c) 2024 Salih Emin - SynergOps
+# Origin: https://github.com/synergops/.zfsonusb
+
+# Load configuration from external file
+CONFIG_FILE=~/.zfsonusb.conf
+if [[ -f "$CONFIG_FILE" ]]; then
+    source "$CONFIG_FILE"
+else
+    echo "Configuration file $CONFIG_FILE not found!"
+    exit 1
+fi
+
+# Function to list available disks in /dev/disk/by-id
+list_disks() {
+    echo -e "Listing available disks in /dev/disk/by-id:"
+    ls -l /dev/disk/by-id | grep usb
+}
+
+# Function to import the ZFS pool
+import_pool() {
+    IMPORT_CMD="sudo zpool import"
+    for DISK in "${DISKS[@]}"; do
+        IMPORT_CMD="$IMPORT_CMD -d $DISK"
+    done
+    IMPORT_CMD="$IMPORT_CMD $ZFS_POOL_NAME -N"
+    eval "$IMPORT_CMD"
+    sudo zfs mount -a 
+    # If you don't use NFS shares and you get an error about  
+    # "failed to lock /etc/exports.d/zfs.exports" 
+    # run "systemctl disable --now zfs-share.service"
+    sudo zfs get mounted
+    sudo zpool status
+}
+
+# Function to export the ZFS pool and power off external disks
+export_pool() {
+    sudo sync
+    sudo zfs unmount -a
+    sudo zpool export "$ZFS_POOL_NAME"
+    # Prepare the udisksctl power-off command
+    POWER_OFF_CMD="sudo udisksctl power-off"
+    if command -v udisksctl &> /dev/null; then
+    	for DISK in "${DISKS[@]}"; do
+    	     POWER_OFF_CMD="$POWER_OFF_CMD -b $DISK"
+    	done
+    	# Execute the udisksctl power-off command
+    	eval "$POWER_OFF_CMD"
+    else
+    	echo "udisksctl was not found in your system. Please install it or you have to manually poweroff your external disks"
+    fi
+}
+
+# Function to display help with detailed steps
+show_help() {
+    echo "Usage: $0 {import|export|list|help}"
+    echo ""
+    echo "Steps to use the script:"
+    echo "  1. List available disks in /dev/disk/by-id:"
+    echo "     zfsonusb list"
+    echo ""
+    echo "  2. After identifying the disks, edit the 'zfsonusb.conf' file"
+    echo "     to include the disk paths under the DISKS array."
+    echo ""
+    echo "     Example 'zfsonusb.conf':"
+    echo ""
+    echo "     ZFS_POOL_NAME=\"zones\""
+    echo "     DISKS=("
+    echo "       \"/dev/disk/by-id/usb-ST950042_0AS_00A1234567C4-0:0-part1\""
+    echo "       \"/dev/disk/by-id/usb-TOSHIBA_MQ01ABF050_00A1234567C4-0:1-part1\""
+    echo "     )"
+    echo ""
+    echo "  3. After configuring the 'zfsonusb.conf' file, you can:"
+    echo "     - Import the ZFS pool: zfsonusb import"
+    echo "     - Export the ZFS pool and power off disks: zfsonusb export"
+    echo ""
+    echo "Options:"
+    echo "  import   : Import the ZFS pool and mount datasets"
+    echo "  export   : Unmount the ZFS pool and power off external disks"
+    echo "  list     : List available disks in /dev/disk/by-id"
+    echo "  help     : Display this help message"
+}
+
+# Command-line argument parsing
+case "$1" in
+    import)
+        import_pool
+        ;;
+    export)
+        export_pool
+        ;;
+    list)
+        list_disks
+        ;;
+    help|--help|-h)
+        show_help
+        ;;
+    *)
+        echo "Error: Invalid option"
+        show_help
+        exit 1
+        ;;
+esac
