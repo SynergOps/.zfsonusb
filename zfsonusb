@@ -34,20 +34,42 @@ import_pool() {
         IMPORT_CMD="$IMPORT_CMD -d $DISK"
     done
     IMPORT_CMD="$IMPORT_CMD $ZFS_POOL_NAME -N"
+    echo "Importing ZFS pool $ZFS_POOL_NAME"
     eval "$IMPORT_CMD"
-    sudo zfs mount -a 
+    sleep 1
+    echo "Mounting non-encrypted ZFS datasets:"
+    sudo zfs mount -a
+    sleep 1
     # If you don't use NFS shares and you get an error about  
     # "failed to lock /etc/exports.d/zfs.exports" 
     # run "systemctl disable --now zfs-share.service"
+    echo "----------------------------------------"
+    echo "ZFS datasets mounted:"
+    echo "----------------------------------------"
     sudo zfs get mounted
+    echo "----------------------------------------"
+    sleep 1
+    echo "ZFS pool status:"
+    echo "----------------------------------------"
     sudo zpool status
+    sleep 1
+    echo "----------------------------------------"
+    echo "ZFS pool capacity status:"
+    echo "----------------------------------------"
+    sudo zpool list
 }
 
 # Function to export the ZFS pool and power off external disks
 export_pool() {
+    echo "Syncing filesystems..."
     sudo sync
+    sleep 1
+    echo "Unmounting ZFS datasets..."
     sudo zfs unmount -a
+    sleep 1
+    echo "Exporting ZFS pool $ZFS_POOL_NAME ..."
     sudo zpool export "$ZFS_POOL_NAME"
+    sleep 1
     # Prepare the udisksctl power-off command
     POWER_OFF_CMD="sudo udisksctl power-off"
     if command -v udisksctl &> /dev/null; then
@@ -55,7 +77,9 @@ export_pool() {
     	     POWER_OFF_CMD="$POWER_OFF_CMD -b $DISK"
     	done
     	# Execute the udisksctl power-off command
+        echo "Powering off external disks..."
     	eval "$POWER_OFF_CMD"
+        sleep 1
     else
     	echo "udisksctl was not found in your system. Please install it or you have to manually poweroff your external disks"
     fi
