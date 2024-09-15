@@ -4,6 +4,8 @@
 # Origin: https://github.com/synergops/.zfsonusb
 
 # Load configuration from external file
+# shellcheck source=/dev/null
+
 CONFIG_FILE=~/.zfsonusb.conf
 if [[ -f "$CONFIG_FILE" ]]; then
     source "$CONFIG_FILE"
