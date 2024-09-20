@@ -22,6 +22,7 @@ $ git clone https://github.com/synergops/.zfsonusb.git
 
 # Copy the conf file to your home folder
 $ cp .zfsonusb/.zfsonusb.conf .
+$ cp .zfsonusb/.rsync-home-excludes.txt .
 
 # Copy the executable in to your system binaries
 $ sudo cp .zfsonusb/zfsonusb /usr/bin/zfsonusb
@@ -38,6 +39,7 @@ Options:
   import   : Import the ZFS pool and mount datasets
   export   : Unmount the ZFS pool and power off external disks
   list     : List available disks in /dev/disk/by-id
+  backup   : Backup your home folder to the ZFS pool
   help     : Display this help message
 ```
 Once you install it, you need to initialize the `conf` with the appropriate settings
@@ -58,8 +60,14 @@ Once you install it, you need to initialize the `conf` with the appropriate sett
        "/dev/disk/by-id/usb-TOSHIBA_XXXXXXXXXXXXX-0:1-part1"
      )
      ```
+     Set the `BACKUP_SOURCE` and `BACKUP_DESTINATION` in the `.zfsonusb.conf` file to the desired values.
+
+     Edit the `.rsync-home-excludes.txt` file to exclude the files and directories that you do not want to backup. All lines starting with a # are ignored by rsync, i.e. those directories will be backed up. 
+     The syntax doesn't support comments at the end of a line yet. 
+     At the start there is a section with directories that are probably not worth backing up. Uncomment those lines to exclude them as well.
 
   3. After configuring the `.zfsonusb.conf` file, you can:
      - Import your ZFS pool: `zfsonusb import`
      - Export your ZFS pool and power off disks: `zfsonusb export`
+     - Backup your home folder to the ZFS pool: `zfsonusb backup`
 

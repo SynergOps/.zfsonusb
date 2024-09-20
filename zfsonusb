@@ -13,7 +13,7 @@ else
     exit 1
 fi
 
-VERSION="24.09.16"
+VERSION="24.09.21"
 
 # Function to list available disks in /dev/disk/by-id
 list_disks() {
@@ -84,12 +84,23 @@ export_pool() {
     	echo "udisksctl was not found in your system. Please install it or you have to manually poweroff your external disks"
     fi
 }
+backup_to_pool() {
+    if command -v rsync &> /dev/null; then
+        echo "Backing up $BACKUP_SOURCE to $BACKUP_DESTINATION"
+        echo "Backup will log in file: /tmp/zfsonusb_backup.log"
+        echo "Backup will exclude files in file: $BACKUP_EXCLUDE"
+        sleep 2
+        rsync --archive -hh --log-file=/tmp/zfsonusb_backup.log --delete-excluded --partial --info=stats1,progress2 --modify-window=1 --exclude-from="$BACKUP_EXCLUDE" "$BACKUP_SOURCE" "$BACKUP_DESTINATION"
+    else
+        echo "rsync was not found in your system. Please install it to use backup feature"
+    fi
+}
 
 # Function to display help with detailed steps
 show_help() {
     echo "zfsonusb v$VERSION"
     echo "Usage:" 
-    echo "      zfsonusb {import|export|list|help}"
+    echo "      zfsonusb {import|export|list|backup|help}"
     echo ""
     echo "Steps to use the script:"
     echo "  1. List available disks in /dev/disk/by-id:"
@@ -106,6 +117,10 @@ show_help() {
     echo "       \"/dev/disk/by-id/usb-TOSHIBA_MQ01ABF050_00A1234567C4-0:1-part1\""
     echo "     )"
     echo ""
+    echo "     Set the \"BACKUP_SOURCE\" and \"BACKUP_DESTINATION\" in the \".zfsonusb.conf\" file to the desired values."
+    echo "     Edit the \".rsync-home-excludes.txt\" file to exclude the files and directories that you don't want to backup."
+    echo "     All lines starting with a # are ignored by rsync, i.e. those directories will be backed up."
+    echo ""
     echo "  3. After configuring the 'zfsonusb.conf' file, you can:"
     echo "     - Import the ZFS pool: zfsonusb import"
     echo "     - Export the ZFS pool and power off disks: zfsonusb export"
@@ -114,7 +129,21 @@ show_help() {
     echo "  import   : Import the ZFS pool and mount datasets"
     echo "  export   : Unmount the ZFS pool and power off external disks"
     echo "  list     : List available disks in /dev/disk/by-id"
+    echo "  backup   : Backup data to the ZFS pool"
     echo "  help     : Display this help message"
+    echo ""
+    echo "Backup Usage:"
+    echo "  The backup feature uses rsync to backup data to the ZFS pool."
+    echo "  If you need this feature, configure the following variables in $CONFIG_FILE:"
+    echo "    BACKUP_SOURCE: The source directory to backup"
+    echo "    BACKUP_DESTINATION: The destination directory in the ZFS pool"
+    echo "    BACKUP_EXCLUDE: Path to a file containing rsync exclude patterns"
+    echo ""
+    echo "  The backup will log messages in a temporary file at: /tmp/zfsonusb_backup.log"
+    echo "  CAUTION: Make sure you understand the rsync backup process and the configuration before running the backup."
+    echo "           The backup will exclude files in $BACKUP_EXCLUDE"
+    echo "           and delete files in $BACKUP_DESTINATION that no longer exist in $BACKUP_SOURCE"
+    echo ""
 }
 
 # Command-line argument parsing
@@ -127,6 +156,9 @@ case "$1" in
         ;;
     list)
         list_disks
+        ;;
+    backup)
+        backup_to_pool
         ;;
     help|--help|-h)
         show_help
