@@ -65,8 +65,12 @@ Once you install it, you need to initialize the `conf` with the appropriate sett
      Edit the `.rsync-home-excludes.txt` file to exclude the files and directories that you do not want to backup. All lines starting with a # are ignored by rsync, i.e. those directories will be backed up. 
      The syntax doesn't support comments at the end of a line yet. 
      At the start there is a section with directories that are probably not worth backing up. Uncomment those lines to exclude them as well.
-
+  
   3. After configuring the `.zfsonusb.conf` file, you can:
      - Import your ZFS pool: `zfsonusb import`
      - Backup your home folder to the ZFS pool: `zfsonusb backup`
      - Export your ZFS pool and power off disks: `zfsonusb export`
+
+
+## Contributions
+If you have found this tool useful and saved you time, any donations are welcomed:  <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=SATQ6Y9S3UCSG" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-yellow.svg" alt="Donate to project"></a>
