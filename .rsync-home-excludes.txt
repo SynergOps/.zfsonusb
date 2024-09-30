@@ -4,10 +4,6 @@
 #
 # Author: Ruben Barkow-Kuder <https://github.com/rubo77/rsync-homedir-excludes>
 # Version: 2019-11-30
-#
-# #Usage:
-#    USER=<homedir username here>
-#    rsync -aP --exclude-from=rsync-homedir-excludes.txt /home/$USER/ /media/$USER/linuxbackup/home/$USER/
 
 
 ###############################################
