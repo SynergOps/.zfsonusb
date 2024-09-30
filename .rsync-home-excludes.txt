@@ -15,7 +15,7 @@
 #.AndroidStudio*/
 #Android/Sdk
 #.gradle
-#.gvm
+.gvm
 #.grails/
 #.grails_history
 #.kde/share/apps/nepomuk
@@ -37,35 +37,41 @@
 #/Nextcloud
 #_build
 #
+
 ## Ruby gems
 #.rvm
 #
+
 ## Add Game Folders here:
 #
 #/games
-#.local/share/Steam
-#.var/app/com.valvesoftware.Steam/.local/share/Steam
-#.steam
-#/Steam
-#.minecraft
-#.technic
-#.PlayOnLinux
-#.local/share/lutris/runners/wine/
-#
+.local/share/Steam
+.var/app/com.valvesoftware.Steam/.local/share/Steam
+.steam
+.steampath
+.steampid
+/Steam
+.minecraft
+.technic
+.PlayOnLinux
+.local/share/lutris/runners/wine/
+
+
 ## Spotify
-#.config/spotify/Users
-#.var/app/com.spotify.Client/config/spotify/Users
-#
+#/.config/spotify/Users
+.var/app
+.var/app/com.spotify.Client/config/spotify/Users
+
 ## those folders contain only temporary Videos I want to watch
 #/Videos
 #/Movies
-#
+
 ## some history files
 #.python_history
 #.bash_history
 #.zsh_history
 #.mysql_history
-#
+
 ## Python eggs
 #.local/lib/python*
 #
@@ -90,8 +96,9 @@
 .gvfs
 .local/share/gvfs-metadata
 # contains the actual encrypted home directory
-/.Private
-
+#/.Private
+#.dotnet
+#.phoronix-test-suite
 # Session-specific:
 /.dbus
 .cache
@@ -101,7 +108,9 @@
 .Trash-1*
 .local/share/Trash
 /Trash
-
+.vmware
+.nv
+.ovftool.ssldb
 # Cached info about audio CDs:
 .cddb
 
